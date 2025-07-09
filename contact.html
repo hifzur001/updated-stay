@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Contact Us - StayScape</title>
+        <meta
+            name="description"
+            content="Get in touch with StayScape. We're here to help you plan your perfect Pakistani adventure."
+        />
+
+        <!-- Bootstrap CSS -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
+        <!-- Font Awesome -->
+        <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+            rel="stylesheet"
+        />
+        <!-- AOS Animation -->
+        <link
+            href="https://unpkg.com/aos@2.3.1/dist/aos.css"
+            rel="stylesheet"
+        />
+        <!-- Custom CSS -->
+        <link href="css/style.css" rel="stylesheet" />
+    </head>
+    <body>
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="index.html">
+                    <i class="fas fa-compass me-2"></i>StayScape
+                </a>
+
+                <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav"
+                >
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="services.html"
+                                >Services</a
+                            >
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="about.html">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="contact.html"
+                                >Contact</a
+                            >
+                        </li>
+                    </ul>
+
+                    <div class="d-flex align-items-center">
+                        <!-- Auth Buttons -->
+                        <div id="authButtons" class="d-flex gap-2">
+                            <button
+                                class="btn btn-outline-primary btn-sm"
+                                onclick="showLoginModal()"
+                            >
+                                Login
+                            </button>
+                            <button
+                                class="btn btn-primary btn-sm"
+                                onclick="showSignupModal()"
+                            >
+                                Sign Up
+                            </button>
+                        </div>
+
+                        <!-- User Avatar (hidden by default) -->
+                        <div
+                            id="userAvatar"
+                            class="dropdown"
+                            style="display: none"
+                        >
+                            <button
+                                class="btn btn-outline-primary dropdown-toggle"
+                                type="button"
+                                data-bs-toggle="dropdown"
+                            >
+                                <i class="fas fa-user me-1"></i
+                                ><span id="usernameDisplay"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a
+                                        class="dropdown-item"
+                                        href="my-bookings.html"
+                                        ><i class="fas fa-calendar me-2"></i>My
+                                        Bookings</a
+                                    >
+                                </li>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li>
+                                    <a
+                                        class="dropdown-item"
+                                        href="#"
+                                        onclick="logout()"
+                                        ><i class="fas fa-sign-out-alt me-2"></i
+                                        >Logout</a
+                                    >
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Page Header -->
+        <section class="page-header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <h1 class="page-title" data-aos="fade-up">
+                            Contact Us
+                        </h1>
+                        <p
+                            class="page-subtitle"
+                            data-aos="fade-up"
+                            data-aos-delay="100"
+                        >
+                            We're here to help you plan your perfect Pakistani
+                            adventure
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="contact-section py-5">
+            <div class="container">
+                <div class="row">
+                    <!-- Contact Information -->
+                    <div class="col-lg-4 mb-5" data-aos="fade-right">
+                        <div class="contact-info">
+                            <h3 class="mb-4">Get in Touch</h3>
+                            <p class="text-muted mb-4">
+                                Have questions about our services? Need help
+                                planning your trip? We're here to assist you
+                                every step of the way.
+                            </p>
+
+                            <div class="contact-item mb-4">
+                                <div class="contact-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <h6>Address</h6>
+                                    <p class="text-muted">
+                                        123 Travel Street, Lahore, Pakistan
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="contact-item mb-4">
+                                <div class="contact-icon">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <h6>Phone</h6>
+                                    <p class="text-muted">+92 300 1234567</p>
+                                </div>
+                            </div>
+
+                            <div class="contact-item mb-4">
+                                <div class="contact-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <h6>Email</h6>
+                                    <p class="text-muted">info@stayscape.com</p>
+                                </div>
+                            </div>
+
+                            <div class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <h6>Business Hours</h6>
+                                    <p class="text-muted">
+                                        Mon - Fri: 9:00 AM - 6:00 PM<br />Sat -
+                                        Sun: 10:00 AM - 4:00 PM
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Form -->
+                    <div class="col-lg-8" data-aos="fade-left">
+                        <div class="contact-form-wrapper">
+                            <h3 class="mb-4">Send us a Message</h3>
+
+                            <form id="contactForm" class="contact-form">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label
+                                            for="firstName"
+                                            class="form-label"
+                                            >First Name *</label
+                                        >
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="firstName"
+                                            name="firstName"
+                                            required
+                                        />
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="lastName" class="form-label"
+                                            >Last Name *</label
+                                        >
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="lastName"
+                                            name="lastName"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="email" class="form-label"
+                                            >Email Address *</label
+                                        >
+                                        <input
+                                            type="email"
+                                            class="form-control"
+                                            id="email"
+                                            name="email"
+                                            required
+                                        />
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="phone" class="form-label"
+                                            >Phone Number</label
+                                        >
+                                        <input
+                                            type="tel"
+                                            class="form-control"
+                                            id="phone"
+                                            name="phone"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="subject" class="form-label"
+                                        >Subject *</label
+                                    >
+                                    <select
+                                        class="form-select"
+                                        id="subject"
+                                        name="subject"
+                                        required
+                                    >
+                                        <option value="">
+                                            Select a subject
+                                        </option>
+                                        <option value="General Inquiry">
+                                            General Inquiry
+                                        </option>
+                                        <option value="Booking Support">
+                                            Booking Support
+                                        </option>
+                                        <option value="Service Information">
+                                            Service Information
+                                        </option>
+                                        <option value="Partnership">
+                                            Partnership Opportunity
+                                        </option>
+                                        <option value="Complaint">
+                                            Complaint
+                                        </option>
+                                        <option value="Feedback">
+                                            Feedback
+                                        </option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="message" class="form-label"
+                                        >Message *</label
+                                    >
+                                    <textarea
+                                        class="form-control"
+                                        id="message"
+                                        name="message"
+                                        rows="6"
+                                        placeholder="Tell us how we can help you..."
+                                        required
+                                    ></textarea>
+                                </div>
+
+                                <div class="mb-4">
+                                    <div class="form-check">
+                                        <input
+                                            class="form-check-input"
+                                            type="checkbox"
+                                            id="newsletter"
+                                            name="newsletter"
+                                        />
+                                        <label
+                                            class="form-check-label"
+                                            for="newsletter"
+                                        >
+                                            Subscribe to our newsletter for
+                                            travel tips and special offers
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary btn-lg"
+                                >
+                                    <i class="fas fa-paper-plane me-2"></i>Send
+                                    Message
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="faq-section py-5 bg-light">
+            <div class="container">
+                <div class="text-center mb-5" data-aos="fade-up">
+                    <h2 class="section-title">Frequently Asked Questions</h2>
+                    <p class="section-subtitle">
+                        Quick answers to common questions
+                    </p>
+                </div>
+
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div
+                            class="accordion"
+                            id="faqAccordion"
+                            data-aos="fade-up"
+                            data-aos-delay="100"
+                        >
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button
+                                        class="accordion-button"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#faq1"
+                                    >
+                                        How do I book a service on StayScape?
+                                    </button>
+                                </h2>
+                                <div
+                                    id="faq1"
+                                    class="accordion-collapse collapse show"
+                                    data-bs-parent="#faqAccordion"
+                                >
+                                    <div class="accordion-body">
+                                        Simply browse our services, select your
+                                        preferred option, choose your dates, and
+                                        complete the booking process. You'll
+                                        receive a confirmation email with all
+                                        the details.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button
+                                        class="accordion-button collapsed"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#faq2"
+                                    >
+                                        Can I cancel or modify my booking?
+                                    </button>
+                                </h2>
+                                <div
+                                    id="faq2"
+                                    class="accordion-collapse collapse"
+                                    data-bs-parent="#faqAccordion"
+                                >
+                                    <div class="accordion-body">
+                                        Yes, you can cancel or modify your
+                                        booking through your account dashboard.
+                                        Cancellation policies vary by service
+                                        provider, so please check the specific
+                                        terms for your booking.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button
+                                        class="accordion-button collapsed"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#faq3"
+                                    >
+                                        What payment methods do you accept?
+                                    </button>
+                                </h2>
+                                <div
+                                    id="faq3"
+                                    class="accordion-collapse collapse"
+                                    data-bs-parent="#faqAccordion"
+                                >
+                                    <div class="accordion-body">
+                                        We accept major credit cards, debit
+                                        cards, and local payment methods
+                                        including JazzCash and EasyPaisa for
+                                        your convenience.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button
+                                        class="accordion-button collapsed"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#faq4"
+                                    >
+                                        Is customer support available 24/7?
+                                    </button>
+                                </h2>
+                                <div
+                                    id="faq4"
+                                    class="accordion-collapse collapse"
+                                    data-bs-parent="#faqAccordion"
+                                >
+                                    <div class="accordion-body">
+                                        Our customer support team is available
+                                        during business hours (9 AM - 6 PM,
+                                        Mon-Fri). For urgent matters, you can
+                                        reach us through our emergency contact
+                                        number.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button
+                                        class="accordion-button collapsed"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#faq5"
+                                    >
+                                        How do I become a service provider?
+                                    </button>
+                                </h2>
+                                <div
+                                    id="faq5"
+                                    class="accordion-collapse collapse"
+                                    data-bs-parent="#faqAccordion"
+                                >
+                                    <div class="accordion-body">
+                                        If you're interested in partnering with
+                                        us as a service provider, please contact
+                                        us through the partnership inquiry
+                                        option in the contact form above, and
+                                        our team will guide you through the
+                                        process.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer py-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-4 mb-4">
+                        <h5 class="text-white mb-3">
+                            <i class="fas fa-compass me-2"></i>StayScape
+                        </h5>
+                        <p class="text-white-50">
+                            Your ultimate travel companion for discovering the
+                            beauty and culture of Pakistan. From luxury stays to
+                            authentic experiences.
+                        </p>
+                        <div class="social-links">
+                            <a href="#" class="text-white-50 me-3"
+                                ><i class="fab fa-facebook-f"></i
+                            ></a>
+                            <a href="#" class="text-white-50 me-3"
+                                ><i class="fab fa-twitter"></i
+                            ></a>
+                            <a href="#" class="text-white-50 me-3"
+                                ><i class="fab fa-instagram"></i
+                            ></a>
+                            <a href="#" class="text-white-50"
+                                ><i class="fab fa-linkedin-in"></i
+                            ></a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-2 col-md-6 mb-4">
+                        <h6 class="text-white mb-3">Quick Links</h6>
+                        <ul class="list-unstyled">
+                            <li>
+                                <a href="index.html" class="text-white-50"
+                                    >Home</a
+                                >
+                            </li>
+                            <li>
+                                <a href="services.html" class="text-white-50"
+                                    >Services</a
+                                >
+                            </li>
+                            <li>
+                                <a href="about.html" class="text-white-50"
+                                    >About</a
+                                >
+                            </li>
+                            <li>
+                                <a href="contact.html" class="text-white-50"
+                                    >Contact</a
+                                >
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-2 col-md-6 mb-4">
+                        <h6 class="text-white mb-3">Services</h6>
+                        <ul class="list-unstyled">
+                            <li>
+                                <a href="#" class="text-white-50"
+                                    >Accommodation</a
+                                >
+                            </li>
+                            <li>
+                                <a href="#" class="text-white-50"
+                                    >Experiences</a
+                                >
+                            </li>
+                            <li>
+                                <a href="#" class="text-white-50"
+                                    >Transportation</a
+                                >
+                            </li>
+                            <li>
+                                <a href="#" class="text-white-50"
+                                    >Food & Dining</a
+                                >
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-2 col-md-6 mb-4">
+                        <h6 class="text-white mb-3">Support</h6>
+                        <ul class="list-unstyled">
+                            <li>
+                                <a href="#" class="text-white-50"
+                                    >Help Center</a
+                                >
+                            </li>
+                            <li>
+                                <a href="#" class="text-white-50"
+                                    >Privacy Policy</a
+                                >
+                            </li>
+                            <li>
+                                <a href="#" class="text-white-50"
+                                    >Terms of Service</a
+                                >
+                            </li>
+                            <li>
+                                <a href="#" class="text-white-50"
+                                    >Refund Policy</a
+                                >
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-2 col-md-6 mb-4">
+                        <h6 class="text-white mb-3">Admin</h6>
+                        <ul class="list-unstyled">
+                            <li>
+                                <a href="admin/index.html" class="text-white-50"
+                                    >Admin Panel</a
+                                >
+                            </li>
+                            <li>
+                                <a
+                                    href="broker/index.html"
+                                    class="text-white-50"
+                                    >Broker Panel</a
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <hr class="my-4 border-white-50" />
+
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <p class="text-white-50 mb-0">
+                            &copy; 2024 StayScape. All rights reserved.
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <p class="text-white-50 mb-0">
+                            Made with
+                            <i class="fas fa-heart text-danger"></i> for
+                            Pakistan
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Login Modal -->
+        <div class="modal fade" id="loginModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Login to StayScape</h5>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                        ></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="loginForm">
+                            <div class="mb-3">
+                                <label for="loginUsername" class="form-label"
+                                    >Username or Email</label
+                                >
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="loginUsername"
+                                    required
+                                />
+                            </div>
+                            <div class="mb-3">
+                                <label for="loginPassword" class="form-label"
+                                    >Password</label
+                                >
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    id="loginPassword"
+                                    required
+                                />
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                Login
+                            </button>
+                        </form>
+                        <div class="text-center mt-3">
+                            <p class="mb-0">
+                                Don't have an account?
+                                <a href="#" onclick="showSignupModal()"
+                                    >Sign up here</a
+                                >
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Signup Modal -->
+        <div class="modal fade" id="signupModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Join StayScape</h5>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                        ></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="signupForm">
+                            <div class="mb-3">
+                                <label for="signupFullName" class="form-label"
+                                    >Full Name</label
+                                >
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="signupFullName"
+                                />
+                            </div>
+                            <div class="mb-3">
+                                <label for="signupUsername" class="form-label"
+                                    >Username</label
+                                >
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="signupUsername"
+                                    required
+                                />
+                            </div>
+                            <div class="mb-3">
+                                <label for="signupEmail" class="form-label"
+                                    >Email</label
+                                >
+                                <input
+                                    type="email"
+                                    class="form-control"
+                                    id="signupEmail"
+                                    required
+                                />
+                            </div>
+                            <div class="mb-3">
+                                <label for="signupPassword" class="form-label"
+                                    >Password</label
+                                >
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    id="signupPassword"
+                                    required
+                                />
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                Create Account
+                            </button>
+                        </form>
+                        <div class="text-center mt-3">
+                            <p class="mb-0">
+                                Already have an account?
+                                <a href="#" onclick="showLoginModal()"
+                                    >Login here</a
+                                >
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Go to Top Button -->
+        <button id="goToTop" class="go-to-top">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+
+        <!-- Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+        <script src="js/script.js"></script>
+    </body>
+</html>

@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>About Us - StayScape</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
+        <link
+            href="https://unpkg.com/aos@2.3.1/dist/aos.css"
+            rel="stylesheet"
+        />
+        <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+            rel="stylesheet"
+        />
+        <link href="css/style.css" rel="stylesheet" />
+    </head>
+    <body>
+        <!-- Enhanced Navbar -->
+        <nav class="navbar navbar-expand-lg fixed-top">
+            <div class="container">
+                <a class="navbar-brand cd fw-bold" href="index.html">
+                    <i class="fas fa-map-marked-alt me-2"></i>StayScape
+                </a>
+
+                <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav"
+                >
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html">
+                                <i class="fas fa-home me-1"></i>Home
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="about.html">
+                                <i class="fas fa-info-circle me-1"></i>About
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="services.html">
+                                <i class="fas fa-concierge-bell me-1"></i
+                                >Services
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="contact.html">
+                                <i class="fas fa-envelope me-1"></i>Contact
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="d-flex align-items-center">
+                        <!-- Auth Buttons -->
+                        <div id="authButtons">
+                            <a
+                                href="#"
+                                class="bothBtnLink me-3"
+                                onclick="showLoginModal()"
+                                >Login</a
+                            >
+                            <button
+                                class="btn btn-primary"
+                                onclick="showSignupModal()"
+                            >
+                                <span class="registerBtnText">Sign Up</span>
+                            </button>
+                        </div>
+
+                        <!-- User Avatar (hidden initially) -->
+                        <div
+                            id="userAvatar"
+                            class="dropdown"
+                            style="display: none"
+                        >
+                            <button
+                                class="btn btn-outline-primary dropdown-toggle"
+                                type="button"
+                                data-bs-toggle="dropdown"
+                            >
+                                <i class="fas fa-user-circle me-1"></i>
+                                <span id="usernameDisplay"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a
+                                        class="dropdown-item"
+                                        href="my-bookings.html"
+                                    >
+                                        <i class="fas fa-calendar-alt me-2"></i
+                                        >My Bookings
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li>
+                                    <a
+                                        class="dropdown-item"
+                                        href="#"
+                                        onclick="logout()"
+                                    >
+                                        <i class="fas fa-sign-out-alt me-2"></i
+                                        >Logout
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Page Header -->
+        <section class="page-header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <h1 class="cd" data-aos="fade-up">About StayScape</h1>
+                        <nav
+                            aria-label="breadcrumb"
+                            data-aos="fade-up"
+                            data-aos-delay="100"
+                        >
+                            <ol class="breadcrumb justify-content-center">
+                                <li class="breadcrumb-item">
+                                    <a href="index.html">Home</a>
+                                </li>
+                                <li class="breadcrumb-item active">About</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Hero Section -->
+        <section class="py-5">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6" data-aos="fade-right">
+                        <div class="about-content">
+                            <h2 class="cd gradient-text mb-4">
+                                Your Trusted Travel Companion in Pakistan
+                            </h2>
+                            <p class="lead mb-4">
+                                StayScape is Pakistan's premier travel platform,
+                                connecting travelers with authentic experiences
+                                across the country's most beautiful
+                                destinations. We believe that every journey
+                                should be memorable, comfortable, and enriching.
+                            </p>
+                            <p class="mb-4">
+                                Founded with a passion for showcasing Pakistan's
+                                incredible diversity, we curate the finest
+                                accommodations, dining experiences, cultural
+                                tours, and adventures that capture the true
+                                spirit of our beautiful nation.
+                            </p>
+                            <div class="row g-4 mb-4">
+                                <div class="col-6">
+                                    <div class="stat-item text-center">
+                                        <h3 class="text-green-primary cd">
+                                            1500+
+                                        </h3>
+                                        <p class="mb-0">Happy Travelers</p>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="stat-item text-center">
+                                        <h3 class="text-green-primary cd">
+                                            50+
+                                        </h3>
+                                        <p class="mb-0">Curated Services</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6" data-aos="fade-left">
+                        <div class="about-image-grid">
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <img
+                                        src="https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg"
+                                        alt="Pakistani Culture"
+                                        class="img-fluid rounded shadow"
+                                    />
+                                </div>
+                                <div class="col-6">
+                                    <img
+                                        src="https://images.pexels.com/photos/338504/pexels-photo-338504.jpeg"
+                                        alt="Beautiful Landscapes"
+                                        class="img-fluid rounded shadow"
+                                    />
+                                </div>
+                                <div class="col-12">
+                                    <img
+                                        src="https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg"
+                                        alt="Hospitality"
+                                        class="img-fluid rounded shadow"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mission & Vision Section -->
+        <section class="py-5 bg-light">
+            <div class="container">
+                <div class="row">
+                    <div
+                        class="col-lg-4"
+                        data-aos="fade-up"
+                        data-aos-delay="100"
+                    >
+                        <div class="card value-card h-100 text-center">
+                            <div class="card-body">
+                                <div class="value-icon">
+                                    <i
+                                        class="fas fa-bullseye fa-3x text-green-primary"
+                                    ></i>
+                                </div>
+                                <h5 class="card-title">Our Mission</h5>
+                                <p class="card-text">
+                                    To make Pakistan's incredible destinations
+                                    accessible to everyone by providing
+                                    seamless, authentic, and memorable travel
+                                    experiences that showcase our country's rich
+                                    heritage and natural beauty.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="col-lg-4"
+                        data-aos="fade-up"
+                        data-aos-delay="200"
+                    >
+                        <div class="card value-card h-100 text-center">
+                            <div class="card-body">
+                                <div class="value-icon">
+                                    <i
+                                        class="fas fa-eye fa-3x text-green-primary"
+                                    ></i>
+                                </div>
+                                <h5 class="card-title">Our Vision</h5>
+                                <p class="card-text">
+                                    To become Pakistan's leading travel
+                                    platform, recognized for excellence in
+                                    service, authenticity in experiences, and
+                                    commitment to promoting sustainable tourism
+                                    across the nation.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="col-lg-4"
+                        data-aos="fade-up"
+                        data-aos-delay="300"
+                    >
+                        <div class="card value-card h-100 text-center">
+                            <div class="card-body">
+                                <div class="value-icon">
+                                    <i
+                                        class="fas fa-heart fa-3x text-green-primary"
+                                    ></i>
+                                </div>
+                                <h5 class="card-title">Our Values</h5>
+                                <p class="card-text">
+                                    Authenticity, Excellence, Sustainability,
+                                    and Hospitality. We believe in preserving
+                                    Pakistan's cultural heritage while providing
+                                    modern, comfortable travel experiences.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Our Story Section -->
+        <section class="py-5">
+            <div class="container">
+                <div class="row">
+                    <div
+                        class="col-lg-8 mx-auto text-center"
+                        data-aos="fade-up"
+                    >
+                        <h2 class="cd gradient-text mb-4">Our Story</h2>
+                        <p class="lead mb-4">
+                            StayScape was born from a simple idea: Pakistan has
+                            incredible destinations that deserve to be
+                            experienced by travelers from around the world.
+                        </p>
+                    </div>
+                </div>
+                <div class="row align-items-center">
+                    <div class="col-lg-6" data-aos="fade-right">
+                        <img
+                            src="https://images.pexels.com/photos/2246476/pexels-photo-2246476.jpeg"
+                            alt="Pakistan Heritage"
+                            class="img-fluid rounded shadow"
+                        />
+                    </div>
+                    <div class="col-lg-6" data-aos="fade-left">
+                        <div class="story-content">
+                            <h4 class="mb-3">From Vision to Reality</h4>
+                            <p class="mb-3">
+                                Our journey began in 2020 when our founders,
+                                passionate travelers themselves, recognized the
+                                need for a platform that could connect visitors
+                                with authentic Pakistani experiences. They saw
+                                the gap between Pakistan's incredible tourism
+                                potential and the accessibility of these
+                                experiences.
+                            </p>
+                            <p class="mb-3">
+                                Starting with just a handful of services in
+                                Lahore and Karachi, we've grown to cover major
+                                cities across Pakistan, partnering with local
+                                service providers who share our commitment to
+                                quality and authenticity.
+                            </p>
+                            <p class="mb-4">
+                                Today, StayScape is proud to be the bridge
+                                between travelers and Pakistan's rich tapestry
+                                of experiences, from luxury accommodations to
+                                street food tours, from mountain adventures to
+                                cultural heritage walks.
+                            </p>
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <div class="achievement-item">
+                                        <h5 class="text-green-primary mb-1">
+                                            2020
+                                        </h5>
+                                        <small>Founded</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="achievement-item">
+                                        <h5 class="text-green-primary mb-1">
+                                            8 Cities
+                                        </h5>
+                                        <small>Coverage</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Team Section -->
+        <section class="py-5 bg-light">
+            <div class="container">
+                <div class="text-center mb-5" data-aos="fade-up">
+                    <h2 class="cd gradient-text">Meet Our Team</h2>
+                    <p class="lead text-muted">
+                        The passionate individuals behind StayScape
+                    </p>
+                </div>
+
+                <div class="row g-4">
+                    <div
+                        class="col-lg-4 col-md-6"
+                        data-aos="fade-up"
+                        data-aos-delay="100"
+                    >
+                        <div class="card team-card text-center">
+                            <div class="card-body">
+                                <div class="team-avatar mb-3">
+                                    <img
+                                        src="https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg"
+                                        alt="CEO"
+                                        class="rounded-circle"
+                                        width="100"
+                                        height="100"
+                                    />
+                                </div>
+                                <h5 class="card-title">Sarah Ahmed</h5>
+                                <p class="text-green-primary mb-2">
+                                    Founder & CEO
+                                </p>
+                                <p class="card-text text-muted">
+                                    Passionate about sustainable tourism and
+                                    showcasing Pakistan's beauty to the world.
+                                </p>
+                                <div class="social-links">
+                                    <a href="#"
+                                        ><i class="fab fa-linkedin-in"></i
+                                    ></a>
+                                    <a href="#"
+                                        ><i class="fab fa-twitter"></i
+                                    ></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="col-lg-4 col-md-6"
+                        data-aos="fade-up"
+                        data-aos-delay="200"
+                    >
+                        <div class="card team-card text-center">
+                            <div class="card-body">
+                                <div class="team-avatar mb-3">
+                                    <img
+                                        src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg"
+                                        alt="CTO"
+                                        class="rounded-circle"
+                                        width="100"
+                                        height="100"
+                                    />
+                                </div>
+                                <h5 class="card-title">Ali Hassan</h5>
+                                <p class="text-green-primary mb-2">
+                                    Co-Founder & CTO
+                                </p>
+                                <p class="card-text text-muted">
+                                    Technology enthusiast focused on creating
+                                    seamless user experiences.
+                                </p>
+                                <div class="social-links">
+                                    <a href="#"
+                                        ><i class="fab fa-linkedin-in"></i
+                                    ></a>
+                                    <a href="#"
+                                        ><i class="fab fa-github"></i
+                                    ></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="col-lg-4 col-md-6"
+                        data-aos="fade-up"
+                        data-aos-delay="300"
+                    >
+                        <div class="card team-card text-center">
+                            <div class="card-body">
+                                <div class="team-avatar mb-3">
+                                    <img
+                                        src="https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg"
+                                        alt="Operations Manager"
+                                        class="rounded-circle"
+                                        width="100"
+                                        height="100"
+                                    />
+                                </div>
+                                <h5 class="card-title">Fatima Khan</h5>
+                                <p class="text-green-primary mb-2">
+                                    Operations Manager
+                                </p>
+                                <p class="card-text text-muted">
+                                    Ensures every traveler has an exceptional
+                                    experience with our services.
+                                </p>
+                                <div class="social-links">
+                                    <a href="#"
+                                        ><i class="fab fa-linkedin-in"></i
+                                    ></a>
+                                    <a href="#"
+                                        ><i class="fab fa-instagram"></i
+                                    ></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Why Choose Us Section -->
+        <section class="py-5">
+            <div class="container">
+                <div class="text-center mb-5" data-aos="fade-up">
+                    <h2 class="cd gradient-text">Why Choose StayScape?</h2>
+                    <p class="lead text-muted">
+                        What makes us different from other travel platforms
+                    </p>
+                </div>
+
+                <div class="row g-4">
+                    <div
+                        class="col-lg-3 col-md-6"
+                        data-aos="fade-up"
+                        data-aos-delay="100"
+                    >
+                        <div class="feature-box text-center">
+                            <div class="feature-icon">
+                                <i
+                                    class="fas fa-shield-alt fa-3x text-green-primary"
+                                ></i>
+                            </div>
+                            <h5>Verified Partners</h5>
+                            <p class="text-muted">
+                                All our service providers are carefully vetted
+                                and verified for quality and reliability.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div
+                        class="col-lg-3 col-md-6"
+                        data-aos="fade-up"
+                        data-aos-delay="200"
+                    >
+                        <div class="feature-box text-center">
+                            <div class="feature-icon">
+                                <i
+                                    class="fas fa-headset fa-3x text-green-primary"
+                                ></i>
+                            </div>
+                            <h5>24/7 Support</h5>
+                            <p class="text-muted">
+                                Our customer support team is available round the
+                                clock to assist you.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div
+                        class="col-lg-3 col-md-6"
+                        data-aos="fade-up"
+                        data-aos-delay="300"
+                    >
+                        <div class="feature-box text-center">
+                            <div class="feature-icon">
+                                <i
+                                    class="fas fa-money-bill-wave fa-3x text-green-primary"
+                                ></i>
+                            </div>
+                            <h5>Best Prices</h5>
+                            <p class="text-muted">
+                                We guarantee competitive prices and transparent
+                                pricing with no hidden fees.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div
+                        class="col-lg-3 col-md-6"
+                        data-aos="fade-up"
+                        data-aos-delay="400"
+                    >
+                        <div class="feature-box text-center">
+                            <div class="feature-icon">
+                                <i
+                                    class="fas fa-star fa-3x text-green-primary"
+                                ></i>
+                            </div>
+                            <h5>Quality Assured</h5>
+                            <p class="text-muted">
+                                Every service is quality-checked to ensure you
+                                have the best possible experience.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action Section -->
+        <section class="py-5 bg-light">
+            <div class="container">
+                <div class="row">
+                    <div
+                        class="col-lg-8 mx-auto text-center"
+                        data-aos="fade-up"
+                    >
+                        <h2 class="cd gradient-text mb-4">
+                            Ready to Explore Pakistan?
+                        </h2>
+                        <p class="lead mb-4">
+                            Join thousands of travelers who have discovered
+                            Pakistan's beauty through StayScape. Your adventure
+                            awaits!
+                        </p>
+                        <div
+                            class="d-flex flex-wrap justify-content-center gap-3"
+                        >
+                            <a
+                                href="services.html"
+                                class="btn btn-primary btn-lg"
+                            >
+                                <i class="fas fa-search me-2"></i>Browse
+                                Services
+                            </a>
+                            <a
+                                href="contact.html"
+                                class="btn btn-outline-primary btn-lg"
+                            >
+                                <i class="fas fa-envelope me-2"></i>Contact Us
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Login Modal -->
+        <div class="modal fade" id="loginModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Login to StayScape</h5>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                        ></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="loginForm">
+                            <div class="mb-3">
+                                <label for="loginUsername" class="form-label"
+                                    >Username or Email</label
+                                >
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="loginUsername"
+                                    required
+                                />
+                            </div>
+                            <div class="mb-3">
+                                <label for="loginPassword" class="form-label"
+                                    >Password</label
+                                >
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    id="loginPassword"
+                                    required
+                                />
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-sign-in-alt me-2"></i>Login
+                            </button>
+                        </form>
+                        <div class="text-center mt-3">
+                            <p>
+                                Don't have an account?
+                                <a
+                                    href="#"
+                                    class="bothBtnLink"
+                                    onclick="showSignupModal()"
+                                    >Sign up here</a
+                                >
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Signup Modal -->
+        <div class="modal fade" id="signupModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Create Account</h5>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                        ></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="signupForm">
+                            <div class="mb-3">
+                                <label for="signupUsername" class="form-label"
+                                    >Username</label
+                                >
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="signupUsername"
+                                    required
+                                />
+                            </div>
+                            <div class="mb-3">
+                                <label for="signupEmail" class="form-label"
+                                    >Email</label
+                                >
+                                <input
+                                    type="email"
+                                    class="form-control"
+                                    id="signupEmail"
+                                    required
+                                />
+                            </div>
+                            <div class="mb-3">
+                                <label for="signupPassword" class="form-label"
+                                    >Password</label
+                                >
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    id="signupPassword"
+                                    required
+                                />
+                            </div>
+                            <div class="mb-3">
+                                <label for="signupFullName" class="form-label"
+                                    >Full Name (Optional)</label
+                                >
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="signupFullName"
+                                />
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-user-plus me-2"></i>Create
+                                Account
+                            </button>
+                        </form>
+                        <div class="text-center mt-3">
+                            <p>
+                                Already have an account?
+                                <a
+                                    href="#"
+                                    class="bothBtnLink"
+                                    onclick="showLoginModal()"
+                                    >Login here</a
+                                >
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Footer -->
+        <footer class="py-5">
+            <div class="container">
+                <div class="row g-4">
+                    <div class="col-lg-4">
+                        <h5 class="cd text-white mb-3">
+                            <i class="fas fa-map-marked-alt me-2"></i>StayScape
+                        </h5>
+                        <p class="text-white-50 mb-3">
+                            Your trusted travel companion in Pakistan,
+                            connecting you with authentic experiences across the
+                            country.
+                        </p>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-2">
+                        <h6 class="text-white mb-3">Quick Links</h6>
+                        <ul class="list-unstyled">
+                            <li>
+                                <a href="index.html" class="text-white-50"
+                                    >Home</a
+                                >
+                            </li>
+                            <li>
+                                <a href="about.html" class="text-white-50"
+                                    >About</a
+                                >
+                            </li>
+                            <li>
+                                <a href="services.html" class="text-white-50"
+                                    >Services</a
+                                >
+                            </li>
+                            <li>
+                                <a href="contact.html" class="text-white-50"
+                                    >Contact</a
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-3">
+                        <h6 class="text-white mb-3">Services</h6>
+                        <ul class="list-unstyled">
+                            <li>
+                                <a href="#" class="text-white-50"
+                                    >Accommodation</a
+                                >
+                            </li>
+                            <li>
+                                <a href="#" class="text-white-50"
+                                    >Transportation</a
+                                >
+                            </li>
+                            <li>
+                                <a href="#" class="text-white-50">Dining</a>
+                            </li>
+                            <li>
+                                <a href="#" class="text-white-50"
+                                    >Entertainment</a
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-3">
+                        <h6 class="text-white mb-3">Contact Info</h6>
+                        <ul class="list-unstyled">
+                            <li class="text-white-50 mb-2">
+                                <i class="fas fa-phone me-2"></i>+92 300 1234567
+                            </li>
+                            <li class="text-white-50 mb-2">
+                                <i class="fas fa-envelope me-2"></i
+                                >info@stayscape.com
+                            </li>
+                            <li class="text-white-50">
+                                <i class="fas fa-map-marker-alt me-2"></i
+                                >Lahore, Pakistan
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <hr class="my-4 border-secondary" />
+                <div class="text-center">
+                    <p class="text-white-50 mb-0">
+                        &copy; 2024 StayScape. All rights reserved.
+                    </p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- WhatsApp Button -->
+        <a
+            href="https://wa.me/923001234567"
+            class="whatsapp-btn position-fixed"
+            style="bottom: 20px; left: 20px; z-index: 1000"
+        >
+            <i class="fab fa-whatsapp"></i>
+        </a>
+
+        <!-- Go to Top Button -->
+        <button
+            id="goToTop"
+            class="position-fixed"
+            style="bottom: 20px; right: 20px; z-index: 1000"
+        >
+            <i class="fas fa-arrow-up"></i>
+        </button>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+        <script src="js/script.js"></script>
+    </body>
+</html>

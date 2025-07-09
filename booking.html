@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Service - StayScape</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Enhanced Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand cd fw-bold" href="index.html">
+                <i class="fas fa-map-marked-alt me-2"></i>StayScape
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="about.html">
+                            <i class="fas fa-info-circle me-1"></i>About
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="services.html">
+                            <i class="fas fa-concierge-bell me-1"></i>Services
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contact.html">
+                            <i class="fas fa-envelope me-1"></i>Contact
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="d-flex align-items-center">
+                    <!-- Auth Buttons -->
+                    <div id="authButtons">
+                        <a href="#" class="bothBtnLink me-3" onclick="showLoginModal()">Login</a>
+                        <button class="btn btn-primary" onclick="showSignupModal()">
+                            <span class="registerBtnText">Sign Up</span>
+                        </button>
+                    </div>
+                    
+                    <!-- User Avatar (hidden initially) -->
+                    <div id="userAvatar" class="dropdown" style="display: none;">
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-1"></i>
+                            <span id="usernameDisplay"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="my-bookings.html">
+                                <i class="fas fa-calendar-alt me-2"></i>My Bookings
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" onclick="logout()">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h1 class="cd">Book Your Service</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb justify-content-center">
+                            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                            <li class="breadcrumb-item"><a href="services.html">Services</a></li>
+                            <li class="breadcrumb-item active">Book Service</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <!-- Service Details -->
+                <div class="col-lg-5">
+                    <div class="card service-summary-card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-info-circle me-2"></i>Service Details
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="serviceDetails">
+                                <!-- Service details will be loaded here -->
+                                <div class="text-center py-4">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-2">Loading service details...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Price Summary -->
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-calculator me-2"></i>Price Summary
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="priceSummary">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Base Price:</span>
+                                    <span id="basePrice">-</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Duration:</span>
+                                    <span id="duration">-</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Guests:</span>
+                                    <span id="guestCount">-</span>
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-between fw-bold">
+                                    <span>Total:</span>
+                                    <span id="totalPrice" class="text-green-primary">PKR 0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Booking Form -->
+                <div class="col-lg-7">
+                    <div class="card booking-form-card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-calendar-check me-2"></i>Booking Information
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="bookingForm">
+                                <input type="hidden" id="serviceId" name="service_id">
+                                
+                                <!-- Booking Details -->
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <label for="guests" class="form-label">Number of Guests</label>
+                                        <input type="number" class="form-control" id="guests" name="guests" min="1" value="1" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="checkInDate" class="form-label">Check-in Date</label>
+                                        <input type="date" class="form-control" id="checkInDate" name="check_in_date" required>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <label for="checkOutDate" class="form-label">Check-out Date</label>
+                                        <input type="date" class="form-control" id="checkOutDate" name="check_out_date" required>
+                                    </div>
+                                </div>
+
+                                <!-- Contact Information -->
+                                <h6 class="mb-3">
+                                    <i class="fas fa-user me-2"></i>Contact Information
+                                </h6>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="contactName" class="form-label">Full Name</label>
+                                        <input type="text" class="form-control" id="contactName" name="contact_name" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="contactEmail" class="form-label">Email Address</label>
+                                        <input type="email" class="form-control" id="contactEmail" name="contact_email" required>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <label for="contactPhone" class="form-label">Phone Number</label>
+                                        <input type="tel" class="form-control" id="contactPhone" name="contact_phone" required>
+                                    </div>
+                                </div>
+
+                                <!-- Special Requests -->
+                                <div class="mb-4">
+                                    <label for="specialRequests" class="form-label">Special Requests (Optional)</label>
+                                    <textarea class="form-control" id="specialRequests" name="special_requests" rows="3" placeholder="Any special requirements or requests..."></textarea>
+                                </div>
+
+                                <!-- Terms and Conditions -->
+                                <div class="mb-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                                        <label class="form-check-label" for="agreeTerms">
+                                            I agree to the <a href="#" class="text-green-primary">Terms and Conditions</a> and <a href="#" class="text-green-primary">Privacy Policy</a>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary btn-lg" id="submitBooking">
+                                        <i class="fas fa-credit-card me-2"></i>Confirm Booking
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Login to StayScape</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="loginUsername" class="form-label">Username or Email</label>
+                            <input type="text" class="form-control" id="loginUsername" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="loginPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </button>
+                    </form>
+                    <div class="text-center mt-3">
+                        <p>Don't have an account? <a href="#" class="bothBtnLink" onclick="showSignupModal()">Sign up here</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div class="modal fade" id="signupModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create Account</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="signupForm">
+                        <div class="mb-3">
+                            <label for="signupUsername" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="signupUsername" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="signupEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="signupEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="signupPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="signupPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="signupFullName" class="form-label">Full Name (Optional)</label>
+                            <input type="text" class="form-control" id="signupFullName">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-user-plus me-2"></i>Create Account
+                        </button>
+                    </form>
+                    <div class="text-center mt-3">
+                        <p>Already have an account? <a href="#" class="bothBtnLink" onclick="showLoginModal()">Login here</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Footer -->
+    <footer class="py-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <h5 class="cd text-white mb-3">
+                        <i class="fas fa-map-marked-alt me-2"></i>StayScape
+                    </h5>
+                    <p class="text-white-50 mb-3">
+                        Your trusted travel companion in Pakistan, connecting you with authentic experiences across the country.
+                    </p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <h6 class="text-white mb-3">Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="text-white-50">Home</a></li>
+                        <li><a href="about.html" class="text-white-50">About</a></li>
+                        <li><a href="services.html" class="text-white-50">Services</a></li>
+                        <li><a href="contact.html" class="text-white-50">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3">
+                    <h6 class="text-white mb-3">Services</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white-50">Accommodation</a></li>
+                        <li><a href="#" class="text-white-50">Transportation</a></li>
+                        <li><a href="#" class="text-white-50">Dining</a></li>
+                        <li><a href="#" class="text-white-50">Entertainment</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3">
+                    <h6 class="text-white mb-3">Contact Info</h6>
+                    <ul class="list-unstyled">
+                        <li class="text-white-50 mb-2">
+                            <i class="fas fa-phone me-2"></i>+92 300 1234567
+                        </li>
+                        <li class="text-white-50 mb-2">
+                            <i class="fas fa-envelope me-2"></i>info@stayscape.com
+                        </li>
+                        <li class="text-white-50">
+                            <i class="fas fa-map-marker-alt me-2"></i>Lahore, Pakistan
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4 border-secondary">
+            <div class="text-center">
+                <p class="text-white-50 mb-0">&copy; 2024 StayScape. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/booking.js"></script>
+</body>
+</html>
