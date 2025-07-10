@@ -79,10 +79,14 @@ function createBooking() {
         $pdo = getDBConnection();
         
         // Get service details from database
-        $service = getServiceData($serviceId);
+        $service = getServiceDataForBooking($serviceId);
         
         if (!$service) {
-            sendJsonResponse(['success' => false, 'message' => 'Service not found'], 404);
+            // If not found in database, try to get from predefined data
+            $service = getServiceFromPredefinedData($serviceId);
+            if (!$service) {
+                sendJsonResponse(['success' => false, 'message' => 'Service not found'], 404);
+            }
         }
         
         // Check guest capacity
@@ -102,15 +106,14 @@ function createBooking() {
         // Create booking in database
         $stmt = $pdo->prepare("
             INSERT INTO bookings (
-                user_id, vendor_id, service_id, service_title, service_type, service_location,
+                user_id, service_id, service_title, service_type, service_location,
                 booking_reference, guests, check_in_date, check_out_date, total_price, 
-                special_requests, contact_name, contact_email, contact_phone, status
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'confirmed')
+                special_requests, contact_name, contact_email, contact_phone
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
         
         $result = $stmt->execute([
             $user['id'],
-            $service['vendor_id'],
             $serviceId,
             $service['title'],
             $service['type'],
@@ -203,6 +206,92 @@ function cancelBooking() {
     } catch (Exception $e) {
         error_log("Booking cancellation error: " . $e->getMessage());
         sendJsonResponse(['success' => false, 'message' => 'Cancellation failed. Please try again.'], 500);
+    }
+}
+
+// Get service data for booking from predefined data
+function getServiceFromPredefinedData($serviceId) {
+    $servicesData = [
+        'lahore-1' => [
+            'id' => 'lahore-1',
+            'title' => 'Luxury Villa in DHA Phase 5',
+            'type' => 'Accommodation',
+            'city' => 'Lahore',
+            'location' => 'DHA Phase 5, Lahore',
+            'max_guests' => 8,
+            'price_per_night' => 12000
+        ],
+        'lahore-2' => [
+            'id' => 'lahore-2',
+            'title' => 'Old City Heritage Food Tour',
+            'type' => 'Experience',
+            'city' => 'Lahore',
+            'location' => 'Gawalmandi, Lahore',
+            'max_guests' => 12,
+            'price' => 3000
+        ],
+        'karachi-1' => [
+            'id' => 'karachi-1',
+            'title' => 'Clifton Beach Luxury Apartment',
+            'type' => 'Accommodation',
+            'city' => 'Karachi',
+            'location' => 'Clifton Block 4, Karachi',
+            'max_guests' => 6,
+            'price_per_night' => 8500
+        ],
+        'karachi-2' => [
+            'id' => 'karachi-2',
+            'title' => 'Manora Island Deep Sea Fishing',
+            'type' => 'Experience',
+            'city' => 'Karachi',
+            'location' => 'Manora Island, Karachi',
+            'max_guests' => 8,
+            'price' => 4500
+        ],
+        'islamabad-1' => [
+            'id' => 'islamabad-1',
+            'title' => 'Margalla Hills Eco Resort',
+            'type' => 'Accommodation',
+            'city' => 'Islamabad',
+            'location' => 'Margalla Hills, Islamabad',
+            'max_guests' => 4,
+            'price_per_night' => 9500
+        ],
+        'islamabad-2' => [
+            'id' => 'islamabad-2',
+            'title' => 'Margalla Hills Hiking',
+            'type' => 'Adventure',
+            'city' => 'Islamabad',
+            'location' => 'Margalla Hills National Park',
+            'max_guests' => 15,
+            'price' => 1500
+        ]
+    ];
+    
+    return $servicesData[$serviceId] ?? null;
+}
+
+// Get service data for booking (try database first, then predefined)
+function getServiceDataForBooking($serviceId) {
+    try {
+        $pdo = getDBConnection();
+        $stmt = $pdo->prepare("
+            SELECT s.*, v.full_name as vendor_name, v.phone as vendor_phone, v.email as vendor_email 
+            FROM services s 
+            LEFT JOIN vendors v ON s.vendor_id = v.id 
+            WHERE s.service_id = ? AND s.status = 'active'
+        ");
+        $stmt->execute([$serviceId]);
+        $service = $stmt->fetch();
+        
+        if ($service && $service['amenities']) {
+            $service['amenities'] = json_decode($service['amenities'], true);
+        }
+        
+        return $service;
+    } catch (Exception $e) {
+        error_log("Get service data error: " . $e->getMessage());
+        return null;
     }
 }
 ?>

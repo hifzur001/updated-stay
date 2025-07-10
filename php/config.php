@@ -212,13 +212,15 @@ function generateBookingReference() {
 // Calculate total price based on service and dates
 function calculateTotalPrice($serviceId, $checkIn, $checkOut, $guests = 1) {
     try {
-        $pdo = getDBConnection();
-        $stmt = $pdo->prepare("SELECT * FROM services WHERE service_id = ?");
-        $stmt->execute([$serviceId]);
-        $service = $stmt->fetch();
+        // Try to get service from database first
+        $service = getServiceDataForBooking($serviceId);
         
         if (!$service) {
-            return 1000; // Default price if service not found
+            // If not in database, get from predefined data
+            $service = getServiceFromPredefinedData($serviceId);
+            if (!$service) {
+                return 1000; // Default price if service not found
+            }
         }
         
         $checkInDate = new DateTime($checkIn);
@@ -252,6 +254,62 @@ function calculateTotalPrice($serviceId, $checkIn, $checkOut, $guests = 1) {
     } catch (Exception $e) {
         error_log("Price calculation error: " . $e->getMessage());
         return 1000; // Default price
+    }
+}
+
+// Get service from predefined data
+function getServiceFromPredefinedData($serviceId) {
+    $servicesData = [
+        'lahore-1' => [
+            'price_per_night' => 12000,
+            'type' => 'Accommodation'
+        ],
+        'lahore-2' => [
+            'price' => 3000,
+            'type' => 'Experience'
+        ],
+        'karachi-1' => [
+            'price_per_night' => 8500,
+            'type' => 'Accommodation'
+        ],
+        'karachi-2' => [
+            'price' => 4500,
+            'type' => 'Experience'
+        ],
+        'islamabad-1' => [
+            'price_per_night' => 9500,
+            'type' => 'Accommodation'
+        ],
+        'islamabad-2' => [
+            'price' => 1500,
+            'type' => 'Adventure'
+        ]
+    ];
+    
+    return $servicesData[$serviceId] ?? null;
+}
+
+// Get service data for booking (try database first, then predefined)
+function getServiceDataForBooking($serviceId) {
+    try {
+        $pdo = getDBConnection();
+        $stmt = $pdo->prepare("
+            SELECT s.*, v.full_name as vendor_name, v.phone as vendor_phone, v.email as vendor_email 
+            FROM services s 
+            LEFT JOIN vendors v ON s.vendor_id = v.id 
+            WHERE s.service_id = ? AND s.status = 'active'
+        ");
+        $stmt->execute([$serviceId]);
+        $service = $stmt->fetch();
+        
+        if ($service && $service['amenities']) {
+            $service['amenities'] = json_decode($service['amenities'], true);
+        }
+        
+        return $service;
+    } catch (Exception $e) {
+        error_log("Get service data error: " . $e->getMessage());
+        return null;
     }
 }
 

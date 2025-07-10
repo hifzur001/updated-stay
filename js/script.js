@@ -2839,6 +2839,17 @@ function handleBooking(e) {
         });
 }
 
+// Book service function
+function bookService(serviceId) {
+    // Redirect to booking page with service ID
+    window.location.href = `booking.html?service=${serviceId}`;
+}
+
+// Book this service function (for service detail modals)
+function bookThisService(serviceId) {
+    bookService(serviceId);
+}
+
 // Sort services
 function sortServices() {
     const sortSelect = document.getElementById('sortSelect');
