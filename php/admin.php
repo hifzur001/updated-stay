@@ -17,11 +17,20 @@ switch ($action) {
     case 'get_bookings':
         getAdminBookings();
         break;
+    case 'get_users':
+        getAdminUsers();
+        break;
+    case 'get_vendors':
+        getAdminVendors();
+        break;
     case 'get_messages':
         getAdminMessages();
         break;
     case 'update_booking_status':
         updateBookingStatus();
+        break;
+    case 'update_vendor_status':
+        updateVendorStatus();
         break;
     default:
         sendJsonResponse(['success' => false, 'message' => 'Invalid action'], 400);
@@ -36,16 +45,28 @@ function getAdminStats() {
         $totalBookings = $stmt->fetch()['total_bookings'];
         
         // Get total users
-        $stmt = $pdo->query("SELECT COUNT(*) as total_users FROM users");
+        $stmt = $pdo->query("SELECT COUNT(*) as total_users FROM users WHERE role = 'user'");
         $totalUsers = $stmt->fetch()['total_users'];
+        
+        // Get total vendors
+        $stmt = $pdo->query("SELECT COUNT(*) as total_vendors FROM vendors");
+        $totalVendors = $stmt->fetch()['total_vendors'];
         
         // Get total revenue
         $stmt = $pdo->query("SELECT COALESCE(SUM(total_price), 0) as total_revenue FROM bookings WHERE status != 'cancelled'");
         $totalRevenue = $stmt->fetch()['total_revenue'];
         
-        // Get total messages
-        $stmt = $pdo->query("SELECT COUNT(*) as total_messages FROM contact_messages");
-        $totalMessages = $stmt->fetch()['total_messages'];
+        // Get monthly revenue
+        $stmt = $pdo->query("SELECT COALESCE(SUM(total_price), 0) as monthly_revenue FROM bookings WHERE status != 'cancelled' AND MONTH(created_at) = MONTH(CURRENT_DATE()) AND YEAR(created_at) = YEAR(CURRENT_DATE())");
+        $monthlyRevenue = $stmt->fetch()['monthly_revenue'];
+        
+        // Get active services
+        $stmt = $pdo->query("SELECT COUNT(*) as active_services FROM services WHERE status = 'active'");
+        $activeServices = $stmt->fetch()['active_services'];
+        
+        // Get pending approvals
+        $stmt = $pdo->query("SELECT COUNT(*) as pending_approvals FROM vendors WHERE status = 'pending'");
+        $pendingApprovals = $stmt->fetch()['pending_approvals'];
         
         // Get recent bookings
         $stmt = $pdo->prepare("
@@ -63,8 +84,11 @@ function getAdminStats() {
             'stats' => [
                 'total_bookings' => $totalBookings,
                 'total_users' => $totalUsers,
+                'total_vendors' => $totalVendors,
                 'total_revenue' => $totalRevenue,
-                'total_messages' => $totalMessages,
+                'monthly_revenue' => $monthlyRevenue,
+                'active_services' => $activeServices,
+                'pending_approvals' => $pendingApprovals,
                 'recent_bookings' => $recentBookings
             ]
         ]);
@@ -80,10 +104,7 @@ function getAdminBookings() {
         $pdo = getDBConnection();
         
         $stmt = $pdo->prepare("
-            SELECT b.*, u.username,
-                   DATE_FORMAT(b.check_in_date, '%M %d, %Y') as check_in_date_formatted,
-                   DATE_FORMAT(b.check_out_date, '%M %d, %Y') as check_out_date_formatted,
-                   CONCAT('PKR ', FORMAT(b.total_price, 0)) as total_price_formatted
+            SELECT b.*, u.username
             FROM bookings b 
             JOIN users u ON b.user_id = u.id 
             ORDER BY b.created_at DESC
@@ -102,14 +123,58 @@ function getAdminBookings() {
     }
 }
 
+function getAdminUsers() {
+    try {
+        $pdo = getDBConnection();
+        
+        $stmt = $pdo->prepare("
+            SELECT id, username, email, full_name, phone, role, status, created_at
+            FROM users 
+            ORDER BY created_at DESC
+        ");
+        $stmt->execute();
+        $users = $stmt->fetchAll();
+        
+        sendJsonResponse([
+            'success' => true,
+            'users' => $users
+        ]);
+        
+    } catch (Exception $e) {
+        error_log("Admin users error: " . $e->getMessage());
+        sendJsonResponse(['success' => false, 'message' => 'Failed to load users'], 500);
+    }
+}
+
+function getAdminVendors() {
+    try {
+        $pdo = getDBConnection();
+        
+        $stmt = $pdo->prepare("
+            SELECT *
+            FROM vendors 
+            ORDER BY created_at DESC
+        ");
+        $stmt->execute();
+        $vendors = $stmt->fetchAll();
+        
+        sendJsonResponse([
+            'success' => true,
+            'vendors' => $vendors
+        ]);
+        
+    } catch (Exception $e) {
+        error_log("Admin vendors error: " . $e->getMessage());
+        sendJsonResponse(['success' => false, 'message' => 'Failed to load vendors'], 500);
+    }
+}
+
 function getAdminMessages() {
     try {
         $pdo = getDBConnection();
         
         $stmt = $pdo->prepare("
-            SELECT *,
-                   CONCAT(first_name, ' ', last_name) as full_name,
-                   DATE_FORMAT(created_at, '%M %d, %Y at %h:%i %p') as created_at_formatted
+            SELECT *
             FROM contact_messages 
             ORDER BY created_at DESC
         ");
@@ -159,6 +224,41 @@ function updateBookingStatus() {
     } catch (Exception $e) {
         error_log("Update booking status error: " . $e->getMessage());
         sendJsonResponse(['success' => false, 'message' => 'Failed to update booking status'], 500);
+    }
+}
+
+function updateVendorStatus() {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        sendJsonResponse(['success' => false, 'message' => 'Method not allowed'], 405);
+    }
+    
+    $vendorId = (int)($_POST['vendor_id'] ?? 0);
+    $status = sanitizeInput($_POST['status'] ?? '');
+    
+    $validStatuses = ['active', 'inactive', 'pending'];
+    
+    if (!$vendorId || !in_array($status, $validStatuses)) {
+        sendJsonResponse(['success' => false, 'message' => 'Invalid vendor ID or status'], 400);
+    }
+    
+    try {
+        $pdo = getDBConnection();
+        
+        $stmt = $pdo->prepare("UPDATE vendors SET status = ?, updated_at = NOW() WHERE id = ?");
+        $stmt->execute([$status, $vendorId]);
+        
+        if ($stmt->rowCount() > 0) {
+            sendJsonResponse([
+                'success' => true,
+                'message' => 'Vendor status updated successfully'
+            ]);
+        } else {
+            sendJsonResponse(['success' => false, 'message' => 'Vendor not found'], 404);
+        }
+        
+    } catch (Exception $e) {
+        error_log("Update vendor status error: " . $e->getMessage());
+        sendJsonResponse(['success' => false, 'message' => 'Failed to update vendor status'], 500);
     }
 }
 ?>

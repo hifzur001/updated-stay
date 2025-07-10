@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - StayScape</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        }
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 1rem 1.5rem;
+            border-radius: 0;
+            transition: all 0.3s ease;
+        }
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .stats-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .main-content {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+        .navbar-brand {
+            font-weight: 700;
+            color: #28a745 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 px-0">
+                <div class="sidebar">
+                    <div class="p-3">
+                        <h4 class="text-white">
+                            <i class="fas fa-shield-alt me-2"></i>Admin Panel
+                        </h4>
+                    </div>
+                    <nav class="nav flex-column">
+                        <a class="nav-link active" href="#" onclick="showDashboard()">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </a>
+                        <a class="nav-link" href="#" onclick="showBookings()">
+                            <i class="fas fa-calendar-alt me-2"></i>Bookings
+                        </a>
+                        <a class="nav-link" href="#" onclick="showUsers()">
+                            <i class="fas fa-users me-2"></i>Users
+                        </a>
+                        <a class="nav-link" href="#" onclick="showVendors()">
+                            <i class="fas fa-store me-2"></i>Vendors
+                        </a>
+                        <a class="nav-link" href="#" onclick="showServices()">
+                            <i class="fas fa-concierge-bell me-2"></i>Services
+                        </a>
+                        <a class="nav-link" href="#" onclick="showMessages()">
+                            <i class="fas fa-envelope me-2"></i>Messages
+                        </a>
+                        <a class="nav-link" href="#" onclick="adminLogout()">
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                        </a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10">
+                <div class="main-content">
+                    <!-- Header -->
+                    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+                        <div class="container-fluid">
+                            <span class="navbar-brand">StayScape Admin</span>
+                            <div class="d-flex align-items-center">
+                                <span class="me-3">Welcome, <strong id="adminInfo">Admin</strong></span>
+                            </div>
+                        </div>
+                    </nav>
+
+                    <!-- Dashboard Content -->
+                    <div class="container-fluid py-4" id="dashboardContent">
+                        <h2 class="mb-4">Dashboard Overview</h2>
+                        
+                        <!-- Stats Cards -->
+                        <div class="row g-4 mb-4" id="statsContainer">
+                            <!-- Stats will be loaded here -->
+                        </div>
+
+                        <!-- Recent Activity -->
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-clock me-2"></i>Recent Bookings
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="recentBookings">
+                                            <!-- Recent bookings will be loaded here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-chart-pie me-2"></i>Quick Stats
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between mb-3">
+                                            <span>Active Services:</span>
+                                            <strong id="activeServices">-</strong>
+                                        </div>
+                                        <div class="d-flex justify-content-between mb-3">
+                                            <span>Pending Approvals:</span>
+                                            <strong id="pendingApprovals">-</strong>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <span>This Month Revenue:</span>
+                                            <strong id="monthlyRevenue">-</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Content Area -->
+                    <div class="container-fluid py-4" id="dynamicContent" style="display: none;">
+                        <!-- Dynamic content will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-shield-alt me-2"></i>Admin Login
+                    </h5>
+                </div>
+                <div class="modal-body">
+                    <form id="adminLoginForm">
+                        <div class="mb-3">
+                            <label for="adminUsername" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="adminUsername" value="admin" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="adminPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="adminPassword" value="admin123" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </button>
+                    </form>
+                    <div class="mt-3">
+                        <small class="text-muted">
+                            Default credentials: admin / admin123
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

@@ -78,6 +78,11 @@ function getUserBookings() {
             
             // Status badge class for frontend
             $booking['status_class'] = getStatusClass($booking['status']);
+            $booking['status_label'] = ucfirst($booking['status']);
+            
+            // Check if booking can be cancelled
+            $booking['can_cancel'] = in_array($booking['status'], ['pending', 'confirmed']) && 
+                                   new DateTime($booking['check_in_date']) > new DateTime('+1 day');
         }
         
         sendJsonResponse([

@@ -78,7 +78,7 @@ function createBooking() {
     try {
         $pdo = getDBConnection();
         
-        // Get service details
+        // Get service details from database
         $service = getServiceData($serviceId);
         
         if (!$service) {
@@ -86,8 +86,8 @@ function createBooking() {
         }
         
         // Check guest capacity
-        if ($guests > $service['maxGuests']) {
-            sendJsonResponse(['success' => false, 'message' => "Maximum {$service['maxGuests']} guests allowed for this service"], 400);
+        if ($guests > $service['max_guests']) {
+            sendJsonResponse(['success' => false, 'message' => "Maximum {$service['max_guests']} guests allowed for this service"], 400);
         }
         
         // Calculate total price
@@ -99,17 +99,18 @@ function createBooking() {
         // Get current user
         $user = getCurrentUser();
         
-        // Create booking
+        // Create booking in database
         $stmt = $pdo->prepare("
             INSERT INTO bookings (
-                user_id, service_id, service_title, service_type, service_location,
+                user_id, vendor_id, service_id, service_title, service_type, service_location,
                 booking_reference, guests, check_in_date, check_out_date, total_price, 
-                special_requests, contact_name, contact_email, contact_phone
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                special_requests, contact_name, contact_email, contact_phone, status
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'confirmed')
         ");
         
         $result = $stmt->execute([
             $user['id'],
+            $service['vendor_id'],
             $serviceId,
             $service['title'],
             $service['type'],
@@ -130,6 +131,9 @@ function createBooking() {
         }
         
         $bookingId = $pdo->lastInsertId();
+        
+        // Log the booking creation
+        error_log("Booking created successfully: ID {$bookingId}, Reference: {$bookingReference}");
         
         sendJsonResponse([
             'success' => true,
@@ -154,7 +158,7 @@ function createBooking() {
         
     } catch (Exception $e) {
         error_log("Booking creation error: " . $e->getMessage());
-        sendJsonResponse(['success' => false, 'message' => 'Booking failed. Please try again.'], 500);
+        sendJsonResponse(['success' => false, 'message' => 'Booking failed. Please try again. Error: ' . $e->getMessage()], 500);
     }
 }
 

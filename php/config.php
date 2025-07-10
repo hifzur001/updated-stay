@@ -3,7 +3,7 @@
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
 define('DB_PASS', '');
-define('DB_NAME', 'city_services_db');
+define('DB_NAME', 'stayscape_db');
 
 // Create database connection
 function getDBConnection() {
@@ -45,10 +45,69 @@ function initializeDatabase() {
                 password VARCHAR(255) NOT NULL,
                 full_name VARCHAR(100),
                 phone VARCHAR(20),
+                role ENUM('user', 'admin') DEFAULT 'user',
+                status ENUM('active', 'inactive') DEFAULT 'active',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 INDEX idx_username (username),
-                INDEX idx_email (email)
+                INDEX idx_email (email),
+                INDEX idx_role (role)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        ");
+        
+        // Create vendors table
+        $pdo->exec("
+            CREATE TABLE IF NOT EXISTS vendors (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                username VARCHAR(50) UNIQUE NOT NULL,
+                email VARCHAR(100) UNIQUE NOT NULL,
+                password VARCHAR(255) NOT NULL,
+                full_name VARCHAR(100) NOT NULL,
+                phone VARCHAR(20) NOT NULL,
+                city VARCHAR(50) NOT NULL,
+                address TEXT,
+                business_name VARCHAR(200),
+                business_license VARCHAR(100),
+                status ENUM('active', 'inactive', 'pending') DEFAULT 'pending',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                INDEX idx_username (username),
+                INDEX idx_email (email),
+                INDEX idx_city (city),
+                INDEX idx_status (status)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        ");
+        
+        // Create services table
+        $pdo->exec("
+            CREATE TABLE IF NOT EXISTS services (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                vendor_id INT NOT NULL,
+                service_id VARCHAR(50) UNIQUE NOT NULL,
+                title VARCHAR(200) NOT NULL,
+                type VARCHAR(50) NOT NULL,
+                city VARCHAR(50) NOT NULL,
+                location VARCHAR(200) NOT NULL,
+                price_per_night DECIMAL(10,2) NULL,
+                price_per_day DECIMAL(10,2) NULL,
+                price_per_hour DECIMAL(10,2) NULL,
+                price_per_km DECIMAL(10,2) NULL,
+                price DECIMAL(10,2) NULL,
+                rating DECIMAL(3,2) DEFAULT 0.00,
+                description TEXT,
+                amenities JSON,
+                max_guests INT DEFAULT 1,
+                picture_url VARCHAR(500),
+                status ENUM('active', 'inactive', 'pending') DEFAULT 'pending',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                FOREIGN KEY (vendor_id) REFERENCES vendors(id) ON DELETE CASCADE,
+                INDEX idx_vendor_id (vendor_id),
+                INDEX idx_service_id (service_id),
+                INDEX idx_city (city),
+                INDEX idx_type (type),
+                INDEX idx_status (status),
+                INDEX idx_rating (rating)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
         ");
         
@@ -57,6 +116,7 @@ function initializeDatabase() {
             CREATE TABLE IF NOT EXISTS bookings (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 user_id INT NOT NULL,
+                vendor_id INT NOT NULL,
                 service_id VARCHAR(50) NOT NULL,
                 service_title VARCHAR(200) NOT NULL,
                 service_type VARCHAR(50) NOT NULL,
@@ -70,15 +130,19 @@ function initializeDatabase() {
                 contact_phone VARCHAR(20) NOT NULL,
                 special_requests TEXT,
                 total_price DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-                status ENUM('pending', 'confirmed', 'cancelled', 'completed') DEFAULT 'confirmed',
+                status ENUM('pending', 'confirmed', 'cancelled', 'completed') DEFAULT 'pending',
+                payment_status ENUM('pending', 'paid', 'refunded') DEFAULT 'pending',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                FOREIGN KEY (vendor_id) REFERENCES vendors(id) ON DELETE CASCADE,
                 INDEX idx_user_id (user_id),
+                INDEX idx_vendor_id (vendor_id),
                 INDEX idx_service_id (service_id),
                 INDEX idx_booking_reference (booking_reference),
                 INDEX idx_status (status),
-                INDEX idx_dates (check_in_date, check_out_date)
+                INDEX idx_dates (check_in_date, check_out_date),
+                INDEX idx_created_at (created_at)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
         ");
         
@@ -115,6 +179,24 @@ function initializeDatabase() {
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
         ");
         
+        // Insert default admin user if not exists
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE username = 'admin' LIMIT 1");
+        $stmt->execute();
+        if (!$stmt->fetch()) {
+            $adminPassword = password_hash('admin123', PASSWORD_DEFAULT);
+            $stmt = $pdo->prepare("INSERT INTO users (username, email, password, full_name, role) VALUES (?, ?, ?, ?, ?)");
+            $stmt->execute(['admin', 'admin@stayscape.com', $adminPassword, 'System Administrator', 'admin']);
+        }
+        
+        // Insert sample vendor if not exists
+        $stmt = $pdo->prepare("SELECT id FROM vendors WHERE username = 'vendor1' LIMIT 1");
+        $stmt->execute();
+        if (!$stmt->fetch()) {
+            $vendorPassword = password_hash('vendor123', PASSWORD_DEFAULT);
+            $stmt = $pdo->prepare("INSERT INTO vendors (username, email, password, full_name, phone, city, business_name, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute(['vendor1', 'vendor1@stayscape.com', $vendorPassword, 'Ahmed Khan', '+92 300 1234567', 'Lahore', 'Khan Services', 'active']);
+        }
+        
         return true;
     } catch (Exception $e) {
         error_log("Database initialization failed: " . $e->getMessage());
@@ -124,160 +206,77 @@ function initializeDatabase() {
 
 // Generate unique booking reference
 function generateBookingReference() {
-    return 'CS' . date('Y') . strtoupper(substr(uniqid(), -6));
+    return 'SS' . date('Y') . strtoupper(substr(uniqid(), -6));
 }
 
 // Calculate total price based on service and dates
 function calculateTotalPrice($serviceId, $checkIn, $checkOut, $guests = 1) {
-    $checkInDate = new DateTime($checkIn);
-    $checkOutDate = new DateTime($checkOut);
-    $nights = $checkInDate->diff($checkOutDate)->days;
-    
-    if ($nights <= 0) {
-        $nights = 1; // Minimum 1 night/day
+    try {
+        $pdo = getDBConnection();
+        $stmt = $pdo->prepare("SELECT * FROM services WHERE service_id = ?");
+        $stmt->execute([$serviceId]);
+        $service = $stmt->fetch();
+        
+        if (!$service) {
+            return 1000; // Default price if service not found
+        }
+        
+        $checkInDate = new DateTime($checkIn);
+        $checkOutDate = new DateTime($checkOut);
+        $nights = $checkInDate->diff($checkOutDate)->days;
+        
+        if ($nights <= 0) {
+            $nights = 1; // Minimum 1 night/day
+        }
+        
+        $basePrice = 0;
+        
+        if ($service['price_per_night']) {
+            $basePrice = $service['price_per_night'] * $nights;
+        } elseif ($service['price_per_day']) {
+            $basePrice = $service['price_per_day'] * $nights;
+        } elseif ($service['price_per_hour']) {
+            $basePrice = $service['price_per_hour'] * 4; // Assume 4 hours
+        } elseif ($service['price_per_km']) {
+            $basePrice = $service['price_per_km'] * 50; // Assume 50km
+        } else {
+            $basePrice = $service['price'] ?? 1000;
+        }
+        
+        // Apply guest multiplier for certain service types
+        if (in_array($service['type'], ['Experience', 'Adventure', 'Cultural']) && $guests > 1) {
+            $basePrice *= $guests;
+        }
+        
+        return $basePrice;
+    } catch (Exception $e) {
+        error_log("Price calculation error: " . $e->getMessage());
+        return 1000; // Default price
     }
-    
-    // Service pricing data
-    $servicePricing = [
-        'lahore-1' => ['price_per_night' => 12000, 'type' => 'Accommodation'],
-        'lahore-2' => ['price' => 3000, 'type' => 'Experience'],
-        'lahore-3' => ['price_per_day' => 4500, 'type' => 'Food & Dining'],
-        'lahore-4' => ['price_per_hour' => 2500, 'type' => 'Transportation'],
-        'lahore-5' => ['price' => 5500, 'type' => 'Adventure'],
-        'karachi-1' => ['price_per_night' => 8500, 'type' => 'Accommodation'],
-        'karachi-2' => ['price' => 4500, 'type' => 'Experience'],
-        'karachi-3' => ['price_per_km' => 25, 'type' => 'Transportation'],
-        'karachi-4' => ['price' => 2500, 'type' => 'Cultural'],
-        'islamabad-1' => ['price_per_night' => 9500, 'type' => 'Accommodation'],
-        'islamabad-2' => ['price' => 1500, 'type' => 'Cultural'],
-        'islamabad-3' => ['price' => 2000, 'type' => 'Adventure']
-    ];
-    
-    $pricing = $servicePricing[$serviceId] ?? ['price' => 1000, 'type' => 'Other'];
-    $basePrice = 0;
-    
-    if (isset($pricing['price_per_night'])) {
-        $basePrice = $pricing['price_per_night'] * $nights;
-    } elseif (isset($pricing['price_per_day'])) {
-        $basePrice = $pricing['price_per_day'] * $nights;
-    } elseif (isset($pricing['price_per_hour'])) {
-        $basePrice = $pricing['price_per_hour'] * 4; // Assume 4 hours
-    } elseif (isset($pricing['price_per_km'])) {
-        $basePrice = $pricing['price_per_km'] * 50; // Assume 50km
-    } else {
-        $basePrice = $pricing['price'];
-    }
-    
-    // Apply guest multiplier for certain service types
-    if (in_array($pricing['type'], ['Experience', 'Adventure', 'Cultural']) && $guests > 1) {
-        $basePrice *= $guests;
-    }
-    
-    return $basePrice;
 }
 
-// Get service data
+// Get service data from database
 function getServiceData($serviceId) {
-    $servicesData = [
-        'lahore-1' => [
-            'id' => 'lahore-1',
-            'title' => 'Luxury Villa in DHA Phase 5',
-            'type' => 'Accommodation',
-            'city' => 'Lahore',
-            'location' => 'DHA Phase 5, Lahore',
-            'maxGuests' => 8
-        ],
-        'lahore-2' => [
-            'id' => 'lahore-2',
-            'title' => 'Old City Heritage Food Tour',
-            'type' => 'Experience',
-            'city' => 'Lahore',
-            'location' => 'Gawalmandi, Lahore',
-            'maxGuests' => 12
-        ],
-        'lahore-3' => [
-            'id' => 'lahore-3',
-            'title' => 'Traditional Punjabi Cooking Class',
-            'type' => 'Food & Dining',
-            'city' => 'Lahore',
-            'location' => 'Model Town, Lahore',
-            'maxGuests' => 8
-        ],
-        'lahore-4' => [
-            'id' => 'lahore-4',
-            'title' => 'Private Car with Driver',
-            'type' => 'Transportation',
-            'city' => 'Lahore',
-            'location' => 'Lahore City',
-            'maxGuests' => 4
-        ],
-        'lahore-5' => [
-            'id' => 'lahore-5',
-            'title' => 'Shalimar Gardens Photography Tour',
-            'type' => 'Adventure',
-            'city' => 'Lahore',
-            'location' => 'Shalimar Gardens, Lahore',
-            'maxGuests' => 6
-        ],
-        'karachi-1' => [
-            'id' => 'karachi-1',
-            'title' => 'Clifton Beach Luxury Apartment',
-            'type' => 'Accommodation',
-            'city' => 'Karachi',
-            'location' => 'Clifton Block 4, Karachi',
-            'maxGuests' => 6
-        ],
-        'karachi-2' => [
-            'id' => 'karachi-2',
-            'title' => 'Karachi Street Food Adventure',
-            'type' => 'Experience',
-            'city' => 'Karachi',
-            'location' => 'Burns Road, Karachi',
-            'maxGuests' => 10
-        ],
-        'karachi-3' => [
-            'id' => 'karachi-3',
-            'title' => 'Airport Transfer Service',
-            'type' => 'Transportation',
-            'city' => 'Karachi',
-            'location' => 'Jinnah International Airport',
-            'maxGuests' => 4
-        ],
-        'karachi-4' => [
-            'id' => 'karachi-4',
-            'title' => 'Mohatta Palace Cultural Tour',
-            'type' => 'Cultural',
-            'city' => 'Karachi',
-            'location' => 'Clifton, Karachi',
-            'maxGuests' => 15
-        ],
-        'islamabad-1' => [
-            'id' => 'islamabad-1',
-            'title' => 'Margalla Hills Eco Resort',
-            'type' => 'Accommodation',
-            'city' => 'Islamabad',
-            'location' => 'Margalla Hills, Islamabad',
-            'maxGuests' => 4
-        ],
-        'islamabad-2' => [
-            'id' => 'islamabad-2',
-            'title' => 'Faisal Mosque Guided Tour',
-            'type' => 'Cultural',
-            'city' => 'Islamabad',
-            'location' => 'Faisal Mosque, Islamabad',
-            'maxGuests' => 20
-        ],
-        'islamabad-3' => [
-            'id' => 'islamabad-3',
-            'title' => 'Margalla Hills Hiking Experience',
-            'type' => 'Adventure',
-            'city' => 'Islamabad',
-            'location' => 'Margalla Hills National Park',
-            'maxGuests' => 8
-        ]
-    ];
-    
-    return $servicesData[$serviceId] ?? null;
+    try {
+        $pdo = getDBConnection();
+        $stmt = $pdo->prepare("
+            SELECT s.*, v.full_name as vendor_name, v.phone as vendor_phone, v.email as vendor_email 
+            FROM services s 
+            JOIN vendors v ON s.vendor_id = v.id 
+            WHERE s.service_id = ? AND s.status = 'active'
+        ");
+        $stmt->execute([$serviceId]);
+        $service = $stmt->fetch();
+        
+        if ($service && $service['amenities']) {
+            $service['amenities'] = json_decode($service['amenities'], true);
+        }
+        
+        return $service;
+    } catch (Exception $e) {
+        error_log("Get service data error: " . $e->getMessage());
+        return null;
+    }
 }
 
 // Send JSON response
@@ -312,6 +311,22 @@ function isLoggedIn() {
     return isset($_SESSION['user_id']);
 }
 
+// Check if admin is logged in
+function isAdminLoggedIn() {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    return isset($_SESSION['admin_id']) && $_SESSION['user_role'] === 'admin';
+}
+
+// Check if vendor is logged in
+function isVendorLoggedIn() {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    return isset($_SESSION['vendor_id']);
+}
+
 // Get current user
 function getCurrentUser() {
     if (session_status() === PHP_SESSION_NONE) {
@@ -324,11 +339,32 @@ function getCurrentUser() {
     
     try {
         $pdo = getDBConnection();
-        $stmt = $pdo->prepare("SELECT id, username, email, full_name, phone FROM users WHERE id = ?");
+        $stmt = $pdo->prepare("SELECT id, username, email, full_name, phone, role FROM users WHERE id = ?");
         $stmt->execute([$_SESSION['user_id']]);
         return $stmt->fetch();
     } catch (Exception $e) {
         error_log("Error getting current user: " . $e->getMessage());
+        return null;
+    }
+}
+
+// Get current vendor
+function getCurrentVendor() {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    
+    if (!isset($_SESSION['vendor_id'])) {
+        return null;
+    }
+    
+    try {
+        $pdo = getDBConnection();
+        $stmt = $pdo->prepare("SELECT * FROM vendors WHERE id = ?");
+        $stmt->execute([$_SESSION['vendor_id']]);
+        return $stmt->fetch();
+    } catch (Exception $e) {
+        error_log("Error getting current vendor: " . $e->getMessage());
         return null;
     }
 }
